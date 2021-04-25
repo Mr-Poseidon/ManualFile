@@ -1,0 +1,554 @@
+		第一章
+常用命令：
+	ls, cd, 
+	pwd - print work directory
+	mkdir, cp, mv, rm, 
+	cat - concatenate 连接
+	su, vim, man
+linux推荐教材：
+	国内：
+		《linux基础教程》清华大学出版社
+		《鸟哥的linux私房菜》基础学习篇和服务器架设篇
+
+	国外：
+		《linux程序设计》第四版（红书，封面有两个老外）
+		《UNIX网络编程》卷一、卷二
+		《UNIX环境高级编程》
+
+linux程序设计三大知识点：文件、进程、进程间通信
+
+一切皆文件，有问题找manual(手册)
+
+根用户标识符#
+普通用户标识符$
+
+/ root根目录
+~home目录
+
+基本访问权限：r,w,x --- 读，写，执行
+用户分类：owner，group，other
+
+tar 解压命令
+sudo 管理员权限执行
+
+1.安装虚拟机
+2.安装虚拟机工具、方便与物理机交互与自适应
+	sudo vmXXXX.pl 文件，一路yes
+3.安装openssh：sudo apt install openssh-server
+4.查看openssh状态：service openssh status
+5.开启openssh：service ssh start(start也可以替换成其他命令，例如：stop,restart)
+6.SSH远程登陆linux系统：
+	登录的主机名字为远程登陆的系统ip，例：192.168.211.131
+	在linux终端中使用 ifconfig 查看ip
+	远程登录的软件为secureCRT，或者Xshell
+	登录的账户为linux的账户，例：jenkins-jenkins(账号-密码)
+
+		第二章
+/bin 可执行文件
+/boot 系统核心文件和启动文件
+/mnt 挂载文件（文件是系统的一部分）
+/dev 设备相关文件
+/etc 配置文件目录
+/home 普通用户的家目录
+/lib 库文件目录
+/root 根用户的家目录
+/sbin 根用户才可以执行的文件
+/srv 存放服务访问数据
+/tmp 存放临时文件
+/opt 第三方文件推荐目录
+/media 移动设备相关文件
+
+cd dir - change directory 切换目录
+cd ./ 当前目录
+cd ../ 上层目录
+cd - 上一个工作目录
+cd ~ 当前登录用户的家目录
+cd ~abc 切换到abc用户的家目录
+
+mkdir - make directory 创建目录
+mkdir sample 创建sample目录
+mkdir -p ./dir01/dir02 递归创建目录，dir01目录并不存在、先创建dir01,在创建dir02
+
+rmdir - remove directory 删除目录
+rmdir sample 删除sample目录，rmdir只能删除空目录
+
+ls - list 列表，显示目录文件
+ls [文件/目录/none]
+
+cp 拷贝文件
+mv 移动文件，也可以重命名文件
+rm 删除文件
+touch 创建文件
+
+创建符号链接与硬链接
+ln -s 源文件 符号链接文件
+link symbol
+
+inode 目录， data block 数据
+每一个硬盘分区相互独立、但是两个硬盘之前inode可能不再唯一
+所以不能在硬盘之间创建硬链接
+硬链接类似指针
+
+tar - tape archive 文件归档，打包文件
+tar命令并不会压缩文件大小、仅仅是打包到一起
+
+tar -cf samplefile.tar /tmp/file01 /tmp/file02 打包
+tar -tf 查看打包文件中的文件
+tar -f XXXXX.tar --delete XXX 删除打包文件中的某个指定文件
+tar -f AAA.tar -A BBB.tar 将B包合并到A包中
+tar -f XXX.tar -r XXX 向包中添加新的文件
+tar -xf XXX.tar -C ./sample 解包到sample中，否则默认当前目录
+
+gzip 压缩文件
+gzip XXX 压缩文件
+gzip -d XXX 解压文件
+调节压缩比 1-9 默认压缩比为6
+压缩比越高、压缩文件最小、压缩速度最慢
+gzip只能压缩单个文件
+一般都是先tar打包、再压缩gzip
+
+tar -czf sample.tar.gz XXX XXX XXX 先把三个文件打包、然后再压缩，
+只需要在tar命令中添加 z 字母
+
+tar -xzf XXX.tar.gz 先解压缩、再解包
+
+locate find 查找文件
+locate 通过数据库查找，默认每天更新一次
+find / -name XXX 精确查找 更目录下 文件名为XXX的文件
+find /bin -type l 根据文件类型进行查找
+d-目录文件，f-普通文件，c-字符设备文件，b-块设备文件，l-符号连接文件
+directory       formal         character             block               link
+
+根据用户组或者id进行查找
+-user -uid
+-group -gid
+根据权限查找 -perm 
+find /tmp -perm 754 -ls
+
+find 目录 -[size/mmin] -ls
+-a 与，-o 或， ！非
+
+访问时间 atime - access time
+修改时间 mtime - modify time
+状态修改时间 ctime - change time
+
+通配符
+* 代表任意长度的字符串
+？代表任意单个字符
+[c1-c2 ] 字符序列
+{string1,string2 } 字符串序列
+
+查看文本文件内容
+cat - concatenate三大功能：链接几个文件、从键盘创建文件、查看文件
+用法： cat 文件名 （适用于小文件
+
+less 文件名 （适用于较大文件
+head tail 用来查看文件头几行或者末尾几行
+
+E: 无法获得锁 /var/lib/dpkg/lock-frontend - open (11: 资源暂时不可用)
+E: 无法获取 dpkg 前端锁 (/var/lib/dpkg/lock-frontend)，是否有其他进程正占用它？
+解决方案：直接删除前端锁，sudo rm /var/lib/dpkg/lock-frontend
+
+GCC编译：
+	四个阶段：预处理，编译，汇编，链接
+		预处理 - 处理头文件和预汇编语句
+		编译 - 生成 .s 汇编文件
+		汇编 - 将.s汇编文件转换成.o目标文件
+		链接 - 将目标文件和所有的库函数链接到可执行文件
+
+gcc编译器：gcc hello.c -o hello 编译hello.c文件并生成可执行文件hello
+gcc -c hello.c 只编译源文件但不链接，会生成同名的目标文件hello.o
+
+gcc hello.c -o hello -g 将调试的信息加载到可执行文件中
+gdb hello 对可执行文件hello进行调试
+
+gdb - gnu的调试器（debugger）
+	常用调试办法：
+		设置断点
+		监视变量值
+		单步执行
+		修改变量值
+	
+	常用指令：
+		help - 帮助命令，查看gdb的使用方法
+		list 列出正在调试的源文件内容
+		break 设置断点
+		run 执行程序
+		print 打印变量的值
+		whatis 查看变量类型
+		continue 继续执行下一个断点
+		next 单步调试（不进入函数）
+		step 单步调试（进入函数）
+
+Makefile管理项目：
+	在存在Makefile文件的文件夹下通过make命令查找并执行Makefile文件
+	
+	显示规则：
+		格式：
+			目标：依赖
+			[tab]命令 - [tab]代表键盘上的tab键
+	
+	变量 - 类似C语言的宏，大小写敏感
+		大写定义变量ABC，$(ABC)引用变量
+	系统自动化变量：
+		$@ 目标文件
+		$^  所有依赖文件
+	例：
+		OBJ=test.o fun1.o fun2.o
+		test:$(OBJ)
+			gcc -o $@ $^ 编译所有的目标文件并生成依赖
+
+		第三章
+三类用户（UID）：管理员用户、虚拟用户、普通用户
+		虚拟用户的作用：用来完成特定任务
+用户组（GID）
+查看用户属性： 
+	id 用户名 - 命令：UID、归属的用户组、GID
+	finger 用户名 - 命令：家目录、SHELL、用户备注
+切换用户：
+	su - switch user
+	su -l 用户名 （-l顺便切换用户环境 -l 可以简化为 -
+创建、修改、删除用户：
+	useradd 用户名 - 创建新用户，只用root用户才能创建新用户
+	passwd 用户名 - 更改用户密码，只有root用户才能更改别人的密码、普通用户只能更改自己的密码
+	usermod - 修改用户
+	userdel 用户名 - 删除用户
+
+	useradd -c 指定用户备注 -u 指定用户uid -d 指定用户家目录 -g 指定主用户组 -G 指定从属用户组 -s 指定shell类型
+
+创建、修改、删除用户组:
+	groupadd 用户组名 - 只有root用户才能创建新的用户组
+	groupmod 用户组名 - 修改用户组的信息
+	groupdel 用户组名 - 删除用户组
+	只要有用户将某用户组作为主用户组、则该用户组无法被删除
+让渡部分根用户权限 - sudo命令：
+	sudo命令不用根用户密码也能执行根用户命令
+	vim /etc/sudoers
+	sudo -u root 命令 也可省略为 sudo 命令
+	sudo -u root shutdown -h 10 十分钟后关机
+	sudo -u root shutdown -c 取消关机命令
+用户管理配置文件：
+	用户文件：/etc/passwd - 系统用户花名册
+		字段 - 用户名：密码：uid：gid：用户描述：家目录位置：shell名称
+
+		 /etc/shadow - passwd的映射文件、是passwd的补充、只有root用户才能访问
+		字段 - 用户登录名：加密的用户密码：密码最后一次修改时间（天数）
+			：密码最小修改间隔：密码最大修改间隔：密码失效警告时间
+			：用户口令（默认空）：用户可用时间（默认空，代表永久）
+		
+	用户组文件：/etc/group - 系统用户组花名册
+			字段 - 用户组名：用户组密码：gid：从属该用户组的用户列表
+
+		     /etc/gshadow - 同用户文件一样
+			字段 - 用户组名：用户组密码：主管理者：从属该用户组的用户列表
+
+	1.在/etc/sudoers添加一行，使得stu用户能够从主机mooc登录，
+	以root用户的身份执行reboot命令，同时无须输入stu密码
+	命令：stu (mooc)=(root) NOPASSWD:reboot
+
+	2.在/etc/sudoers添加一行，使得stu用户能够从IP地址192.168.71.125登录，
+	并以root用户的身份执行reboot命令
+	命令：stu (192.168.71.125)=(root) reboot
+
+	3.在/etc/sudoers添加一行，使得从属于group_s的用户能够从主机mooc登录，
+	以root用户的身份执行reboot命令，同时无须输入stu密码
+	命令：%group_s (mooc)=(root) NOPASSWD:reboot
+
+	4.在/etc/sudoers添加一行，使得stu用户能够在本地（localhost）登录，
+	并以nboocer用户的身份执行passwd命令
+	命令：stu (localhost)=(nboocer) passwd
+	
+
+		第四章
+Shell - Bourne shell家族中的bash与sh与csh要注意区分
+
+	bash是Bourne Again SHell 是linux标准的默认shell ，它基于Bourne shell，
+	吸收了duC shell和Korn shell的一些特性。bash完全兼容Bourne shell,
+	也就是说用Bourne shell的脚本不加修改可以容在bash中执行。
+
+	sh是Bourne shell 这个是UNIX标准的默认shell。
+
+	主流shell是bourne shell中的bash
+	linux默认shell是bash
+	unix默认shell是sh
+	csh与c语言语法相类似
+
+可以使用制表符、十六进制输出：
+	\\ 输出反斜杠
+	\a 输出警告音
+	\b 退格键，向左删除一个字符
+	\c 取消输出行末的换行符，和-n选项一致
+	\e escape键
+	\f 换页符
+	\n 换行符
+	\r 回车键
+	\t 水平制表符
+	\v 垂直制表符
+	\0nnn 按照八进制的ascii码表输出n代表三个八进制字符
+	\xhh 按照十六进制的ascii码表输出h代表两个十六进制字符
+
+echo -e "\e[1;31m abcd\e[0m"  输出颜色31m代表红色
+30m=黑色 31m=红色 32m=绿色 33m=黄色 34m=蓝色 35m=洋红 36m=青色 37m=白色
+
+第一个shell脚本：
+	vim hello.sh
+内容：
+	#!/bin/bash
+	echo -e "Mr. Hong is the most honest man in the world"
+执行文件的两种方式：
+	改变文件权限：
+		chmod 755 hello.sh
+		用相对路径的方式直接执行： ./hello.sh
+	用bash直接执行：	bash hello.sh
+windows和unix文件转换：
+	命令：dos2unix 文件名
+	          unix2dos 文件名
+	安装包命令：yum -y install dos2unix 
+
+标准输入=0
+标准输出=1
+标准错误输出=2
+
+标准输出重定向：
+	命令 > 文件 - 以覆盖的方式，把命令的正确输出输出到指定的文件或设备当中
+	命令 >> 文件 - 以追加的方式，把命令的正确输出输出到指定文件或设备当中
+标准错误输出重定向：
+	错误命令 2> 文件 - 以覆盖的方式，把命令的错误输出输出到指定的文件或设备中
+	错误命令 2>> 文件 - 以追加的方式，把命令的错误输出输出到指定的文件或设备当中
+不管命令正确还是错误，都保存到同一个文件中:
+	命令 >> abc 2>&1 追加方式写到abc文件中，2>&1表示错误输出先定向到标准输出中
+	命令 &>> abc 作用与上述相同
+
+	命令 &>> /dev/null 将输出输出到null文件夹中，文件夹本身为空，即删除输出的功能
+
+命令正确输出到文件1，错误输出到文件2：
+	命令 >> 文件一 2>> 文件二
+
+输入重定向命令：wc [选项][文件名]
+	选项： -c 统计字节数
+		-w 统计单词数
+		-l 统计行数
+	命令示例：wc < 文件名 - 没有指定选项就三个数据都统计
+		  wc -l < 文件名 - 统计文件中的行数
+	
+多命令顺序执行：
+	命令1 ; 命令2 - 命令12都会执行
+	命令1 && 命令2 - 命令1正确才会执行命令2，否则不会执行命令2
+	命令1 || 命令2 - 命令1错误才会执行命令2，否则不执行命令2
+	
+	&& 可以依次执行每一条命令，若出现错误，则会停止执行
+
+	| - 管道符
+	命令1 | 命令2 只有命令1正确执行、才会执行命令2，将命令1的正确输出作为命令2的对象
+
+	grep [选项] “搜索内容” 文件名 - 搜索指定文件中的指定内容、只显示有搜索内容的行
+	选项：
+		-i 忽略大小写    -n 输出行号    -v反向查找    --color=auto 搜索的关键字用特殊颜色显示
+
+通配符：
+	？ 匹配任意一个字符
+	*   匹配0个或多个任意字符
+	[ ]  匹配中括号中的任意一个字符
+	[ - ] 中括号中的-待变一个范围
+	[ ^ ] 代表逻辑非
+其他特殊符号：
+	‘  ’   单引号中的内容不会检查编译
+	“  ”  双引号中的内容会检查编译
+	$变量     引用变量的值
+	`  `   反引号括起来的内容分是系统命令
+	$(  ) 小括号内的内容是系统命令，作用和反引号一样
+	#    在shell脚本中代表注释
+	\     转义符号，用于输出特殊符号
+
+shell变量：
+	变量组成：数字、字母、下划线，不能由数字开头
+	变量类型默认为字符串型
+	环境变量名建议大写、便于区分
+
+	变量分类：
+		用户自定义变量
+		环境变量
+		位置参数变量：用来向脚本当中传递参数或者数据，变量名是固定的
+		预定义变量：是bash中已经定义好的变量，变量名固定，值也固定
+	
+	变量叠加： aa="$aa"456  或者 aa=${aa}789
+	变量调用： $aa
+	变量查看： set - set命令会看到系统中所有的变量
+	变量删除： unset 变量名 - 删除变量
+
+	环境变量：
+		用户自定义变量只会在当前shell中生效，
+		环境变量会在当前这个shell和这个shell下面的所有子shell当中生效
+		如果把环境变量写入相应的配置文件，那么环境变量就会在所有的shell中生效
+	设置环境变量：export 变量名=变量值
+			pstree 确定进程数，也可以查看shell数量和关系
+			env 专用的查看环境的变量
+			unset 变量名  删除变量
+			
+	PS1：定义系统提示符的变量
+	\d  显示日期，格式为：星期  月  日
+	\h  显示简写主机名，如默认主机名：localhost
+	\t  显示24小时制时间，格式为：HH:MM:SS
+	\T  显示12小时制时间，格式为：HH:MM:SS
+	\A  显示24小时制时间，格式为：HH:MM
+	\u  显示当前用户名
+	\w  显示当前所在目录的完整路径
+	\W 显示当前所在目录的最后一个目录
+	\#  执行的第几个命令
+	\$  提示符。如果是root显示为#，普通用户显示为$
+	
+	位置参数变量：
+		$n  n代表数字，在shell脚本中，$0代表命令本身，$1代表第一个参数，以此类推
+		$*   代表所有的参数，把所有的参数看成一个整体
+		$@ 代表所有的参数，把每一个参数看成独立的部分
+		$#  代表参数的个数
+
+	declare声明变量类型：declare [+/-][选项] 变量名
+		选项： - ：给变量设定类型属性
+			+ ：取消变量的类型属性
+			-i ：将变量声明为整数型
+			-x ：将变量声明为环境变量
+			-p ：显示指定变量被声明的类型
+
+	运算部分用 $(( 运算部分 )) 括起来，注意括号的两边都要有一个空格。
+
+	按照文件类型判断：
+		-d 判断文件是不是存在的目录文件
+		-e 判断文件是否真实存在
+		-f  判断文件是否是存在的普通文件
+		-L 判断文件是否是存在的符号链接文件
+	两种判断方式：
+		test -e 文件路径
+		[ -e 文件路径 ] 
+
+	echo $? - 用于判断上一条语句是否正确
+	条件 && 语句1 || 语句2  - 判断条件是否正确，正确执行语句1，错误执行语句2
+	
+	按照文件权限进行判断：
+		-r 判断文件是否有 读 权限
+		-w 判断文件是否有 写 权限
+		-x 判断文件是否有 执行 权限
+		
+	两个文件之间进行比较：
+		文件1 -nt 文件2   判断文件1是不是比文件2新
+		文件1 -ot 文件2   判断文件1是不是比文件2旧
+		文件1 -ef 文件2   判断文件1和文件2是不是指向同一个文件，用于判断nodeid是否相等
+
+	两个数之间比较：
+		num1 -eq num2 判断两个数是否相等
+		num1 -ne num2 判断两数是否不相等
+		num1 -gt num2  判断数1是否大于数2
+		num1 -lt num2   判断数1是否小于数2
+		num1 -ge num2 判断数1是否大于等于数2
+		num1 -le  num2 判断数1是否小于等于数2
+
+	字符串的判断：
+		-z 字符串   判断字符串是否为空
+		-n 字符串   判断字符串是否为非空
+		字符串1==字符串2    判断两个字符串是否相等
+		字符串1 != 字符串2    判断两个字符串是否不相等
+
+	多重条件判断：
+		判断式1 -a 判断式2     只有两个判断式都成立，最终结果才会为真
+		判断式1 -o 判断式2     只要其中一个判断式为真，最终结果就为真
+		！判断式                    对原始的判断结果取反
+
+shell if 语句：
+	单分支判断
+	if [ 判断式 ] 
+		than
+			程序
+	fi
+	或者
+	if [ 判断式 ] ；than
+		程序
+	fi
+
+	命令：df -h  查看分区使用率
+
+	命令：cut -d “%” -f 1    用%将整个字符串分成若干字段，然后只取得第1个字段的值
+
+	双分支判断
+	if [ 判断式 ]
+		than
+			程序1
+		else
+			程序2
+	fi
+
+	多分支判断：
+	if [ 判断式 ]
+		than
+			程序1
+			exit 1
+	elif [ 判断式 ]
+		than
+			程序2
+			exit 2
+	else
+		程序3
+	fi
+	
+	注意：多分支判断语句会一直
+
+case 语句：
+	 case $cho in
+		"yes")
+			echo "You choose is yes"
+			;;
+		"no")
+			echo "You chose is no"
+			;;
+		*)
+			echo "You choose is error"
+			;;
+	esac
+	
+	注意：每个条件结束的双分号不能省略
+	          右括号）左边的字符串代表值、和值匹配则执行该条语句
+	          * 代表其他所有与以上条件不同的情况
+
+shell for 语句：
+	语法一：
+		for 变量 in 值1 值2 值3 ...
+			do
+				程序语句
+			done
+	
+	语法二：
+		for(( 变量初始化;循环判断语句;变量变化 ))
+			do
+				程序块
+			done
+
+while循环 和 until循环 语句：
+	while [ 条件判断式 ]
+		do
+			程序块
+		done
+	注意：while循环只要条件成立就一直循环
+	 
+	until [ 条件判断式 ]
+		do
+			程序块
+		done	
+	注意：until循环只要条件不成立就一直循环、和while相反
+
+shell文件搜索：
+	find 命令
+	find -name "my*" -ls 查找以my开头的文件，并显示信息
+	find 路径 -name “file” 搜索指定目录下的文件，不加路径默认当前路径	
+	which 命令  可以显示一个可执行文件的完整路径
+
+
+		第五章
+文件基本IO操作：
+	常用的系统调用：
+		open 打开、新建文件
+		create 新建文件
+		read 读文件
+		write 写文件
+		lseek 定位文件偏移量
+		close 关闭文件
+
+	

@@ -1,0 +1,44 @@
+1.安装git - 官网：https://git-scm.com
+2.git管理本地仓库：
+
+	git config --global user.name "username"  设置本地客户端的用户名
+	git config --global user.email 850690145@qq.com 设置本地客户端的邮箱
+	
+	git config user.name 查看用户名
+	git config user.email 查看邮箱
+	git config --list 查看git设置列表
+
+	
+	git init 初始化仓库
+	git status 查看git状态
+	git add hello.c 添加hello.c文件到暂存区
+	git commit -m "提交描述"
+	
+	先删除本地文件
+	git rm hello.c 删除hello.c文件
+
+	添加代理：
+	git config --global http.proxy
+	git config --global --unset http.proxy
+	
+3.git管理远程仓库：
+	git clone 仓库地址
+	git push 将本地仓库同步到远程仓库
+	git pull 拉取远程仓库、并合并到本地分支（再更新一次
+	
+	git pull 相当于下面的两行命令。
+	git远程仓库强制覆盖本地仓库：
+		git fetch --all 从远程仓库拉取全部更新，即不一样的步骤
+		git reset -- origin/master 本地代码同步线上的最新版本（会覆盖本地全部与远程仓库上的同名文件
+		
+		
+
+4.搭建个人网站：
+	仓库名必须是：用户名.github.io
+	在仓库下创建index.html即可，不要有readme文件
+	github pages仅支持静态网页
+	仓库里只能是.html文件
+	
+	设置仓库自己的站点：用户名.github.io/仓库名
+
+若出现连接错误，再次push即可，或者输入github用户名和密码通过openSSL连接。
